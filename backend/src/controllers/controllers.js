@@ -309,3 +309,258 @@ const getRelatedConcepts = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+
+const getAllCategories = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 0;
+
+        let categories = await Designs.distinct("metadata.category");
+        const total = categories.length;
+
+        if (limit > 0) {
+            categories = categories.slice((page - 1) * limit, page * limit);
+        }
+
+        res.status(200).json({ 
+            msg: "success", 
+            data: categories,
+            total,
+            page,
+            totalPages: limit > 0 ? Math.ceil(total / limit) : 1
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getCategoryDetails = async (req, res) => {
+    try {
+        const { category } = req.params;
+
+        // Use case-insensitive search for the category
+        const concepts = await Designs.find({
+            "metadata.category": { $regex: new RegExp(`^${category}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({
+                msg: "No concepts found for this category",
+                requestedCategory: category
+            });
+        }
+
+        const subcategories = [...new Set(concepts.map(c => c.metadata.subcategory))];
+
+        res.status(200).json({
+            msg: "success",
+            data: {
+                category,
+                totalConcepts: concepts.length,
+                subcategories,
+                concepts
+            }
+        });
+
+    } catch (err) {
+        console.error("Error in getCategoryDetails:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const getConceptsByCategory = async (req, res) => {
+    try {
+        const { category } = req.params;
+        const concepts = await Designs.find({
+            "metadata.category": { $regex: new RegExp(`^${category}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No concepts found for this category" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getAllSubcategories = async (req, res) => {
+    try {
+        const subcategories = await Designs.distinct("metadata.subcategory");
+        res.status(200).json({ msg: "success", data: subcategories });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getAllTags = async (req, res) => {
+    try {
+        const tags = await Designs.distinct("metadata.tags");
+        res.status(200).json({ msg: "success", data: tags });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getConceptsByTag = async (req, res) => {
+    try {
+        const { tag } = req.params;
+        const concepts = await Designs.find({
+            "metadata.tags": { $regex: new RegExp(`^${tag}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No concepts found with this tag" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getAllPatterns = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 0;
+
+        let patterns = await Designs.distinct("metadata.design_pattern");
+        const total = patterns.length;
+
+        if (limit > 0) {
+            patterns = patterns.slice((page - 1) * limit, page * limit);
+        }
+
+        res.status(200).json({ 
+            msg: "success", 
+            data: patterns,
+            total,
+            page,
+            totalPages: limit > 0 ? Math.ceil(total / limit) : 1
+        });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getConceptsByPattern = async (req, res) => {
+    try {
+        const { patternName } = req.params;
+        const concepts = await Designs.find({
+            "metadata.design_pattern": { $regex: new RegExp(`^${patternName}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No concepts found for this pattern" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getSupportedLanguages = async (req, res) => {
+    try {
+        const languages = await Designs.distinct("metadata.language");
+        const filtered = languages.filter(lang => lang);
+        res.status(200).json({ msg: "success", data: filtered });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getConceptsByLanguage = async (req, res) => {
+    try {
+        const { language } = req.params;
+        const concepts = await Designs.find({
+            "metadata.language": { $regex: new RegExp(`^${language}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No concepts found for this language" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getDifficultyLevels = async (req, res) => {
+    try {
+        const levels = await Designs.distinct("metadata.difficulty");
+        const filtered = levels.filter(level => level);
+        res.status(200).json({ msg: "success", data: filtered });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getConceptsByDifficulty = async (req, res) => {
+    try {
+        const { level } = req.params;
+        const concepts = await Designs.find({
+            "metadata.difficulty": { $regex: new RegExp(`^${level}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No concepts found for this difficulty level" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getQuestionTypes = async (req, res) => {
+    try {
+        const types = await Designs.distinct("metadata.question_type");
+        const filtered = types.filter(type => type);
+        res.status(200).json({ msg: "success", data: filtered });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getConceptsByQuestionType = async (req, res) => {
+    try {
+        const { type } = req.params;
+        const concepts = await Designs.find({
+            "metadata.question_type": { $regex: new RegExp(`^${type}$`, "i") }
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No concepts found for this question type" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getMicroservicesConcepts = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /microservices/i } },
+                { "metadata.subcategory": { $regex: /microservices/i } },
+                { "metadata.tags": { $regex: /microservices/i } },
+                { "metadata.concept": { $regex: /microservices/i } }
+            ]
+        });
+
+        if (concepts.length === 0) {
+            return res.status(404).json({ msg: "No microservices concepts found" });
+        }
+
+        res.status(200).json({ msg: "success", data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
