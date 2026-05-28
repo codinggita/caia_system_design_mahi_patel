@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "c1f8a846-5f81-4328-947b-11d2938a101b",
+		"name": "System Design Interactions API",
+		"description": "API collection for Bookmarks, Notes, and Votes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Bookmarks",
+			"item": [
+				{
+					"name": "Bookmark concept",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookmarks/{{conceptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookmarks",
+								"{{conceptId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove bookmark",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookmarks/{{conceptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookmarks",
+								"{{conceptId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch all bookmarks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/bookmarks",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookmarks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notes",
+			"item": [
+				{
+					"name": "Add notes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"This is an important concept about load balancing.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/notes/{{conceptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notes",
+								"{{conceptId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch notes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/notes/{{conceptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notes",
+								"{{conceptId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update note",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"content\": \"Updated note regarding load balancing with consistent hashing.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/notes/{{noteId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notes",
+								"{{noteId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete note",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/notes/{{noteId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"notes",
+								"{{noteId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Votes",
+			"item": [
+				{
+					"name": "Vote on concept",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vote\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/votes/{{conceptId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"votes",
+								"{{conceptId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top voted concepts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/votes/top?limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"votes",
+								"top"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "conceptId",
+			"value": "INSERT_CONCEPT_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "noteId",
+			"value": "INSERT_NOTE_ID_HERE",
+			"type": "string"
+		}
+	]
+}
