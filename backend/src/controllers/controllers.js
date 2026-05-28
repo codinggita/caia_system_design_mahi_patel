@@ -1161,3 +1161,203 @@ const getSystemDesignRoadmap = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+const suggestNextConcept = async (req, res) => {
+    try {
+        const currentConcept = await Designs.findById(req.params.id);
+        if (!currentConcept) return res.status(404).json({ msg: "Concept not found" });
+
+        const nextConcept = await Designs.findOne({
+            "metadata.category": currentConcept.metadata.category,
+            _id: { $ne: currentConcept._id }
+        });
+
+        res.status(200).json({ msg: "Suggest next concept", data: nextConcept });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getPersonalizedRecommendations = async (req, res) => {
+    try {
+        const concepts = await Designs.aggregate([{ $sample: { size: 5 } }]);
+        res.status(200).json({ msg: "Personalized recommendations", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getDiscoveryTrending = async (req, res) => {
+    try {
+        const concepts = await Designs.find({ "metadata.isTrending": true })
+            .sort({ "metadata.views": -1 })
+            .limit(10);
+        res.status(200).json({ msg: "Trending concepts", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getHiddenGems = async (req, res) => {
+    try {
+        const concepts = await Designs.find({ "metadata.views": { $lt: 20 } }).limit(10);
+        res.status(200).json({ msg: "Lesser known concepts", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getExpertPicks = async (req, res) => {
+    try {
+        const concepts = await Designs.find({ "metadata.difficulty": { $regex: /expert|advanced/i } }).limit(10);
+        res.status(200).json({ msg: "Expert recommended concepts", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getDailyChallenge = async (req, res) => {
+    try {
+        const concept = await Designs.aggregate([{ $sample: { size: 1 } }]);
+        res.status(200).json({ msg: "Daily system design challenge", data: concept[0] });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const bookmarkConcept = async (req, res) => {
+    try {
+        const concept = await Designs.findByIdAndUpdate(
+            req.params.conceptId,
+            { isBookmarked: true },
+            { new: true }
+        );
+        if (!concept) return res.status(404).json({ msg: "Concept not found" });
+        res.status(200).json({ msg: "Bookmarked successfully", data: concept });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const removeBookmark = async (req, res) => {
+    try {
+        const concept = await Designs.findByIdAndUpdate(
+            req.params.conceptId,
+            { isBookmarked: false },
+            { new: true }
+        );
+        if (!concept) return res.status(404).json({ msg: "Concept not found" });
+        res.status(200).json({ msg: "Bookmark removed successfully", data: concept });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getAllBookmarks = async (req, res) => {
+    try {
+        const bookmarks = await Designs.find({ isBookmarked: true });
+        res.status(200).json({ msg: "success", count: bookmarks.length, data: bookmarks });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const addNote = async (req, res) => {
+    try {
+        const { conceptId } = req.params;
+        const { content } = req.body;
+        
+        if (!content) return res.status(400).json({ msg: "Note content is required" });
+
+        const concept = await Designs.findById(conceptId);
+        if (!concept) return res.status(404).json({ msg: "Concept not found" });
+
+        const newNote = await Note.create({ conceptId, content });
+        res.status(201).json({ msg: "Note added successfully", data: newNote });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getNotes = async (req, res) => {
+    try {
+        const { conceptId } = req.params;
+        const notes = await Note.find({ conceptId }).sort({ createdAt: -1 });
+        res.status(200).json({ msg: "success", count: notes.length, data: notes });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const updateNote = async (req, res) => {
+    try {
+        const { noteId } = req.params;
+        const { content } = req.body;
+        
+        if (!content) return res.status(400).json({ msg: "Note content is required" });
+
+        const note = await Note.findByIdAndUpdate(
+            noteId,
+            { content, updatedAt: Date.now() },
+            { new: true }
+        );
+        
+        if (!note) return res.status(404).json({ msg: "Note not found" });
+        res.status(200).json({ msg: "Note updated successfully", data: note });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const deleteNote = async (req, res) => {
+    try {
+        const { noteId } = req.params;
+        const note = await Note.findByIdAndDelete(noteId);
+        
+        if (!note) return res.status(404).json({ msg: "Note not found" });
+        res.status(200).json({ msg: "Note deleted successfully" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const voteOnConcept = async (req, res) => {
+    try {
+        const { conceptId } = req.params;
+        const { vote } = req.body; // expect 1 for upvote, -1 for downvote
+
+        if (vote !== 1 && vote !== -1) {
+            return res.status(400).json({ msg: "Vote must be 1 (upvote) or -1 (downvote)" });
+        }
+
+        const concept = await Designs.findByIdAndUpdate(
+            conceptId,
+            { $inc: { votes: vote } },
+            { new: true }
+        );
+
+        if (!concept) return res.status(404).json({ msg: "Concept not found" });
+        res.status(200).json({ msg: "Voted successfully", data: concept });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getTopVotedConcepts = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const concepts = await Designs.find().sort({ votes: -1 }).limit(limit);
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
