@@ -1361,3 +1361,182 @@ const getTopVotedConcepts = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+
+
+
+const bulkCreateConcepts = async (req, res) => {
+    try {
+        const { concepts } = req.body;
+        if (!concepts || !Array.isArray(concepts)) {
+            return res.status(400).json({ msg: "Expected 'concepts' array in request body" });
+        }
+        const created = await Designs.insertMany(concepts);
+        res.status(201).json({ msg: "Bulk create successful", count: created.length, data: created });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const bulkUpdateConcepts = async (req, res) => {
+    try {
+        const { updates } = req.body; // array of { id, updateFields }
+        if (!updates || !Array.isArray(updates)) {
+            return res.status(400).json({ msg: "Expected 'updates' array in request body" });
+        }
+        
+        const bulkOps = updates.map(update => ({
+            updateOne: {
+                filter: { _id: update.id },
+                update: { $set: update.updateFields },
+                upsert: false
+            }
+        }));
+
+        const result = await Designs.bulkWrite(bulkOps);
+        res.status(200).json({ msg: "Bulk update successful", result });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const bulkDeleteConcepts = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!ids || !Array.isArray(ids)) {
+            return res.status(400).json({ msg: "Expected 'ids' array in request body" });
+        }
+        const result = await Designs.deleteMany({ _id: { $in: ids } });
+        res.status(200).json({ msg: "Bulk delete successful", deletedCount: result.deletedCount });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const bulkArchiveConcepts = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!ids || !Array.isArray(ids)) {
+            return res.status(400).json({ msg: "Expected 'ids' array in request body" });
+        }
+        const result = await Designs.updateMany(
+            { _id: { $in: ids } },
+            { $set: { isArchived: true } }
+        );
+        res.status(200).json({ msg: "Bulk archive successful", modifiedCount: result.modifiedCount });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const bulkRestoreConcepts = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        if (!ids || !Array.isArray(ids)) {
+            return res.status(400).json({ msg: "Expected 'ids' array in request body" });
+        }
+        const result = await Designs.updateMany(
+            { _id: { $in: ids } },
+            { $set: { isArchived: false } }
+        );
+        res.status(200).json({ msg: "Bulk restore successful", modifiedCount: result.modifiedCount });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+module.exports = {
+    getBackendRoadmap,
+    getFrontendRoadmap,
+    getDevOpsRoadmap,
+    getSystemDesignRoadmap,
+    suggestNextConcept,
+    getPersonalizedRecommendations,
+    getDiscoveryTrending,
+    getHiddenGems,
+    getExpertPicks,
+    getDailyChallenge,
+    getAll,
+    getConceptById,
+    createConcept,
+    updateConcept,
+    patchConcept,
+    deleteConcept,
+    getRandomConcept,
+    getLatestConcepts,
+    getTrendingConcepts,
+    getPopularConcepts,
+    getConceptSummary,
+    getConceptHistory,
+    archiveConcept,
+    restoreConcept,
+    getRelatedConcepts,
+    getAllCategories,
+    getCategoryDetails,
+    getConceptsByCategory,
+    getAllSubcategories,
+    getAllTags,
+    getConceptsByTag,
+    getAllPatterns,
+    getConceptsByPattern,
+    getSupportedLanguages,
+    getConceptsByLanguage,
+    getDifficultyLevels,
+    getConceptsByDifficulty,
+    getQuestionTypes,
+    getConceptsByQuestionType,
+    getMicroservicesConcepts,
+    globalSearch,
+    searchByTitle,
+    searchByContent,
+    searchByTags,
+    searchByPatterns,
+    searchByLanguage,
+    searchByCategory,
+    searchByDifficulty,
+    fuzzySearch,
+    autocompleteSearch,
+    getRecentSearches,
+    getPopularSearches,
+    voiceSearch,
+    exactSearch,
+    regexSearch,
+    filterByCategory,
+    filterByDifficulty,
+    filterByPattern,
+    filterByLanguage,
+    filterByDate,
+    filterByTags,
+    filterByBookmarks,
+    filterByTrending,
+    filterByPopular,
+    filterByUnexplored,
+    filterByExpertOnly,
+    filterByFrontend,
+    filterByBackend,
+    filterByDevops,
+    filterByCloud,
+    getConceptsCursor,
+    getConceptsInfinite,
+    paginatedSearchResults,
+    bookmarkConcept,
+    removeBookmark,
+    getAllBookmarks,
+    addNote,
+    getNotes,
+    updateNote,
+    deleteNote,
+    voteOnConcept,
+    getTopVotedConcepts,
+    bulkCreateConcepts,
+    bulkUpdateConcepts,
+    bulkDeleteConcepts,
+    bulkArchiveConcepts,
+    bulkRestoreConcepts
+};
+
