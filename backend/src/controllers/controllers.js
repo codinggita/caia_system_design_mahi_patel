@@ -827,3 +827,196 @@ const regexSearch = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+const filterByCategory = async (req, res) => {
+    try {
+        const { name } = req.query;
+        if (!name) return res.status(400).json({ msg: "Query parameter 'name' is required" });
+        const concepts = await Designs.find({ "metadata.category": { $regex: new RegExp(`^${name}$`, "i") } });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByDifficulty = async (req, res) => {
+    try {
+        const { level } = req.query;
+        if (!level) return res.status(400).json({ msg: "Query parameter 'level' is required" });
+        const concepts = await Designs.find({ "metadata.difficulty": { $regex: new RegExp(`^${level}$`, "i") } });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByPattern = async (req, res) => {
+    try {
+        const { name } = req.query;
+        if (!name) return res.status(400).json({ msg: "Query parameter 'name' is required" });
+        const concepts = await Designs.find({ "metadata.design_pattern": { $regex: new RegExp(`^${name}$`, "i") } });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByLanguage = async (req, res) => {
+    try {
+        const { name } = req.query;
+        if (!name) return res.status(400).json({ msg: "Query parameter 'name' is required" });
+        const concepts = await Designs.find({ "metadata.language": { $regex: new RegExp(`^${name}$`, "i") } });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByDate = async (req, res) => {
+    try {
+        const { after } = req.query;
+        if (!after) return res.status(400).json({ msg: "Query parameter 'after' is required (YYYY-MM-DD)" });
+        const dateObj = new Date(after);
+        const concepts = await Designs.find({ "metadata.generated_at": { $gte: dateObj } });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByTags = async (req, res) => {
+    try {
+        const { list } = req.query;
+        if (!list) return res.status(400).json({ msg: "Query parameter 'list' is required" });
+        const tagsArray = list.split(",").map(t => t.trim());
+        const regexArray = tagsArray.map(t => new RegExp(`^${t}$`, "i"));
+        const concepts = await Designs.find({ "metadata.tags": { $in: regexArray } });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByBookmarks = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 0;
+
+        let query = Designs.find({ isBookmarked: true });
+        if (limit > 0) {
+            query = query.skip((page - 1) * limit).limit(limit);
+        }
+        const concepts = await query;
+        const total = await Designs.countDocuments({ isBookmarked: true });
+
+        res.status(200).json({ 
+            msg: "success", 
+            count: concepts.length, 
+            data: concepts,
+            total,
+            page,
+            totalPages: limit > 0 ? Math.ceil(total / limit) : 1
+        });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByTrending = async (req, res) => {
+    try {
+        const concepts = await Designs.find({ "metadata.isTrending": true });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByPopular = async (req, res) => {
+    try {
+        const concepts = await Designs.find().sort({ "metadata.views": -1 }).limit(20);
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByUnexplored = async (req, res) => {
+    try {
+        const concepts = await Designs.find({ "metadata.views": 0 });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByExpertOnly = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            "metadata.difficulty": { $regex: /expert|advanced/i }
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByFrontend = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /frontend/i } },
+                { "metadata.subcategory": { $regex: /frontend/i } },
+                { "metadata.tags": { $regex: /frontend/i } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByBackend = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /backend/i } },
+                { "metadata.subcategory": { $regex: /backend/i } },
+                { "metadata.tags": { $regex: /backend/i } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByDevops = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /devops/i } },
+                { "metadata.subcategory": { $regex: /devops/i } },
+                { "metadata.tags": { $regex: /devops/i } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const filterByCloud = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /cloud/i } },
+                { "metadata.subcategory": { $regex: /cloud/i } },
+                { "metadata.tags": { $regex: /cloud/i } },
+                { "metadata.concept": { $regex: /cloud/i } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
