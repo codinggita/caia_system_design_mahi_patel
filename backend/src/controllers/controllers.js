@@ -564,3 +564,266 @@ const getMicroservicesConcepts = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+
+const globalSearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const regex = new RegExp(q, "i");
+        const concepts = await Designs.find({
+            $or: [
+                { prompt: { $regex: regex } },
+                { response: { $regex: regex } },
+                { summary: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } },
+                { "metadata.category": { $regex: regex } },
+                { "metadata.subcategory": { $regex: regex } },
+                { "metadata.tags": { $regex: regex } },
+                { "metadata.design_pattern": { $regex: regex } },
+                { "metadata.language": { $regex: regex } },
+                { "metadata.difficulty": { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByTitle = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const regex = new RegExp(q, "i");
+        const concepts = await Designs.find({
+            $or: [
+                { prompt: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByContent = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const regex = new RegExp(q, "i");
+        const concepts = await Designs.find({
+            $or: [
+                { response: { $regex: regex } },
+                { summary: { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByTags = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const concepts = await Designs.find({
+            "metadata.tags": { $regex: new RegExp(q, "i") }
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByPatterns = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const concepts = await Designs.find({
+            "metadata.design_pattern": { $regex: new RegExp(q, "i") }
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByLanguage = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const concepts = await Designs.find({
+            "metadata.language": { $regex: new RegExp(q, "i") }
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByCategory = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const regex = new RegExp(q, "i");
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: regex } },
+                { "metadata.subcategory": { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const searchByDifficulty = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const concepts = await Designs.find({
+            "metadata.difficulty": { $regex: new RegExp(q, "i") }
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const fuzzySearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+        await logSearchQuery(q);
+
+        const fuzzyRegexStr = q.split('').join('.*');
+        const regex = new RegExp(fuzzyRegexStr, "i");
+        
+        const concepts = await Designs.find({
+            $or: [
+                { prompt: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } },
+                { "metadata.tags": { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const autocompleteSearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const regex = new RegExp(`^${q}`, "i");
+        const concepts = await Designs.find({
+            $or: [
+                { prompt: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } },
+                { "metadata.tags": { $regex: regex } }
+            ]
+        }).limit(5).select("prompt metadata.concept metadata.tags");
+        
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getRecentSearches = async (req, res) => {
+    try {
+        const recent = await SearchQuery.find().sort({ lastSearchedAt: -1 }).limit(10);
+        res.status(200).json({ msg: "success", data: recent });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getPopularSearches = async (req, res) => {
+    try {
+        const popular = await SearchQuery.find().sort({ count: -1 }).limit(10);
+        res.status(200).json({ msg: "success", data: popular });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const voiceSearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+        await logSearchQuery(q);
+
+        const words = q.split(/\s+/).filter(w => w.length > 0);
+        const andClauses = words.map(word => ({
+            $or: [
+                { prompt: { $regex: new RegExp(word, "i") } },
+                { response: { $regex: new RegExp(word, "i") } },
+                { summary: { $regex: new RegExp(word, "i") } },
+                { "metadata.concept": { $regex: new RegExp(word, "i") } }
+            ]
+        }));
+
+        const concepts = await Designs.find({ $and: andClauses });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const exactSearch = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+        await logSearchQuery(q);
+
+        const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`\\b${escapedQ}\\b`, "i");
+        
+        const concepts = await Designs.find({
+            $or: [
+                { prompt: { $regex: regex } },
+                { response: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const regexSearch = async (req, res) => {
+    try {
+        const { pattern } = req.query;
+        if (!pattern) return res.status(400).json({ msg: "Query parameter 'pattern' is required" });
+        await logSearchQuery(pattern);
+
+        const regex = new RegExp(pattern, "i");
+        const concepts = await Designs.find({
+            $or: [
+                { prompt: { $regex: regex } },
+                { response: { $regex: regex } },
+                { summary: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } }
+            ]
+        });
+        res.status(200).json({ msg: "success", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
