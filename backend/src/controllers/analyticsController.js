@@ -141,3 +141,107 @@ const getTopSearches = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+
+
+
+
+
+
+const getFailedSearches = async (req, res) => {
+    try {
+        // Proxy for failed searches: queries that have only been searched exactly once (count: 1)
+        const failedProxies = await SearchQuery.find({ count: 1 })
+            .sort({ lastSearchedAt: -1 })
+            .limit(15);
+        res.status(200).json({ msg: "success", data: failedProxies });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getEngagement = async (req, res) => {
+    try {
+        const engagementStats = await Designs.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalViews: { $sum: "$metadata.views" },
+                    avgViews: { $avg: "$metadata.views" },
+                    totalBookmarks: {
+                        $sum: { $cond: [{ $eq: ["$isBookmarked", true] }, 1, 0] }
+                    }
+                }
+            }
+        ]);
+        
+        res.status(200).json({ msg: "success", data: engagementStats[0] || { totalViews: 0, avgViews: 0, totalBookmarks: 0 } });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getApiPerformance = async (req, res) => {
+    try {
+        // Mocked APM data
+        const performance = {
+            averageResponseTime: "45ms",
+            uptime: "99.98%",
+            activeConnections: Math.floor(Math.random() * 500) + 100,
+            requestsPerMinute: Math.floor(Math.random() * 2000) + 500,
+            errorRate: "0.12%"
+        };
+        res.status(200).json({ msg: "success", data: performance });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getDatabasePerformance = async (req, res) => {
+    try {
+        // We can fetch real DB stats using mongoose.connection.db.stats()
+        if (mongoose.connection.readyState === 1 && mongoose.connection.db) {
+            const dbStats = await mongoose.connection.db.stats();
+            res.status(200).json({ msg: "success", data: dbStats });
+        } else {
+            res.status(500).json({ msg: "Database connection not ready" });
+        }
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getCacheHitRate = async (req, res) => {
+    try {
+        // Mocked Cache metrics
+        const hitRate = (Math.random() * (95 - 80) + 80).toFixed(2); // Random between 80% and 95%
+        const cacheMetrics = {
+            cacheHitRate: `${hitRate}%`,
+            cacheMisses: Math.floor(Math.random() * 500),
+            memoryUsage: "256MB",
+            evictions: Math.floor(Math.random() * 100)
+        };
+        res.status(200).json({ msg: "success", data: cacheMetrics });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+module.exports = {
+    getTotalConcepts,
+    getCategoryDistribution,
+    getDifficultyStats,
+    getTopPatterns,
+    getTopLanguages,
+    getTopViewed,
+    getTopBookmarked,
+    getTrendingAnalytics,
+    getMonthlyGrowth,
+    getTopSearches,
+    getFailedSearches,
+    getEngagement,
+    getApiPerformance,
+    getDatabasePerformance,
+    getCacheHitRate
+};
+
