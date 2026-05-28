@@ -1020,3 +1020,144 @@ const filterByCloud = async (req, res) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+const getConceptsCursor = async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const cursor = req.query.cursor; 
+
+        let query = {};
+        if (cursor) {
+            query = { _id: { $gt: cursor } };
+        }
+
+        const concepts = await Designs.find(query).limit(limit);
+        const nextCursor = concepts.length > 0 ? concepts[concepts.length - 1]._id : null;
+
+        res.status(200).json({ 
+            msg: "success", 
+            data: concepts,
+            nextCursor
+        });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getConceptsInfinite = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const concepts = await Designs.find().skip((page - 1) * limit).limit(limit);
+        const total = await Designs.countDocuments();
+        
+        const hasNextPage = (page * limit) < total;
+
+        res.status(200).json({ 
+            msg: "success", 
+            data: concepts,
+            page,
+            hasNextPage
+        });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const paginatedSearchResults = async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) return res.status(400).json({ msg: "Query parameter 'q' is required" });
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+
+        const regex = new RegExp(q, "i");
+        const filter = {
+            $or: [
+                { prompt: { $regex: regex } },
+                { response: { $regex: regex } },
+                { summary: { $regex: regex } },
+                { "metadata.concept": { $regex: regex } },
+                { "metadata.category": { $regex: regex } },
+                { "metadata.subcategory": { $regex: regex } },
+                { "metadata.tags": { $regex: regex } },
+                { "metadata.design_pattern": { $regex: regex } },
+                { "metadata.language": { $regex: regex } },
+                { "metadata.difficulty": { $regex: regex } }
+            ]
+        };
+
+        const concepts = await Designs.find(filter).skip((page - 1) * limit).limit(limit);
+        const total = await Designs.countDocuments(filter);
+
+        res.status(200).json({ 
+            msg: "success", 
+            count: concepts.length, 
+            data: concepts,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+        });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getBackendRoadmap = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /backend/i } },
+                { "metadata.tags": { $regex: /backend/i } }
+            ]
+        }).limit(10);
+        res.status(200).json({ msg: "Backend learning roadmap", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getFrontendRoadmap = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /frontend/i } },
+                { "metadata.tags": { $regex: /frontend/i } }
+            ]
+        }).limit(10);
+        res.status(200).json({ msg: "Frontend roadmap", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getDevOpsRoadmap = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /devops/i } },
+                { "metadata.tags": { $regex: /devops/i } }
+            ]
+        }).limit(10);
+        res.status(200).json({ msg: "DevOps roadmap", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
+
+const getSystemDesignRoadmap = async (req, res) => {
+    try {
+        const concepts = await Designs.find({
+            $or: [
+                { "metadata.category": { $regex: /system design/i } },
+                { "metadata.tags": { $regex: /system design/i } },
+                { "metadata.concept": { $regex: /system design/i } }
+            ]
+        }).limit(10);
+        res.status(200).json({ msg: "System design roadmap", count: concepts.length, data: concepts });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
