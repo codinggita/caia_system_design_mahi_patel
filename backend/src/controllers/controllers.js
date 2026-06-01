@@ -36,66 +36,7 @@ const getConceptById = async (req, res) => {
     }
 };
 
-const getAll = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 0;
-        const { sort } = req.query;
-        
-        let query = Designs.find();
 
-        if (sort) {
-            let sortObj = {};
-            switch(sort) {
-                case 'title': sortObj = { "metadata.concept": 1 }; break;
-                case '-title': sortObj = { "metadata.concept": -1 }; break;
-                case '-createdAt': sortObj = { "metadata.generated_at": -1 }; break;
-                case 'createdAt': sortObj = { "metadata.generated_at": 1 }; break;
-                case 'views': 
-                case 'popularity': sortObj = { "metadata.views": -1 }; break;
-                case '-views': sortObj = { "metadata.views": 1 }; break;
-                case 'bookmarks': sortObj = { "isBookmarked": -1 }; break; 
-                case 'difficulty': sortObj = { "metadata.difficulty": 1 }; break;
-                case '-difficulty': sortObj = { "metadata.difficulty": -1 }; break;
-                case 'category': sortObj = { "metadata.category": 1 }; break;
-                case '-category': sortObj = { "metadata.category": -1 }; break;
-                case 'language': sortObj = { "metadata.language": 1 }; break;
-                case '-language': sortObj = { "metadata.language": -1 }; break;
-                case 'updatedAt': sortObj = { "metadata.generated_at": -1 }; break; 
-                case '-updatedAt': sortObj = { "metadata.generated_at": 1 }; break;
-                default: 
-                    // allow generic sorting if the user provides a direct field
-                    if (sort.startsWith('-')) {
-                        sortObj[sort.substring(1)] = -1;
-                    } else {
-                        sortObj[sort] = 1;
-                    }
-                    break;
-            }
-            query = query.sort(sortObj);
-        }
-
-        if (limit > 0) {
-            query = query.skip((page - 1) * limit).limit(limit);
-        }
-        
-        const system = await query;
-        const total = await Designs.countDocuments();
-        
-        res.status(200).json({ 
-            msg: "success", 
-            data: system, 
-            count: system.length,
-            total,
-            page,
-            totalPages: limit > 0 ? Math.ceil(total / limit) : 1
-        });
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: error.message })
-    }
-}
 
 const createConcept = async (req, res) => {
     try {
