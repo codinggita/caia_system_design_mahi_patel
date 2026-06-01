@@ -30,22 +30,22 @@ This project also introduces important backend practices like **data validation 
 
 ## ⚙️ Tech Stack
 
-* 🟢 Node.js – Backend runtime
-* 🚂 Express.js – Web framework for APIs
-* 🍃 MongoDB – NoSQL database
-* 🧩 Mongoose – ODM for MongoDB
-* ✅ Joi – Data validation library
+*  Node.js – Backend runtime
+*  Express.js – Web framework for APIs
+*  MongoDB – NoSQL database
+*  Mongoose – ODM for MongoDB
+*  Joi – Data validation library
 
 ---
 
 ## 📌 Features
 
-* 📖 Get all concepts
-* 🔍 Get a single concept
-* ➕ Create a new concept
-* ✏️ Update an existing concept
-* ❌ Delete a concept
-* 🗄️ Archive concepts using soft delete (`isArchived`)
+*  Get all concepts
+*  Get a single concept
+*  Create a new concept
+*  Update an existing concept
+*  Delete a concept
+*  Archive concepts using soft delete (`isArchived`)
 
 ---
 
@@ -73,10 +73,10 @@ The server will start locally and you can test APIs using tools like Postman.
 
 ## ✨ Future Improvements
 
-* 🔥 Add views / trending concepts logic
-* 🔐 Implement authentication (JWT)
-* 📊 Add analytics and usage tracking
-* 🌐 Deploy the API
+*  Add views / trending concepts logic
+*  Implement authentication (JWT)
+*  Add analytics and usage tracking
+*  Deploy the API
 
 ---
 
