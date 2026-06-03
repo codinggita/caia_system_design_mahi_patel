@@ -2,18 +2,18 @@ const Designs = require("../models/models");
 const SearchQuery = require("../models/searchQueryModel");
 const Note = require("../models/noteModel");
 
-const logSearchQuery = async (query) => {
-    if (!query) return;
-    try {
-        await SearchQuery.findOneAndUpdate(
-            { query: query.toLowerCase() },
-            { $inc: { count: 1 }, $set: { lastSearchedAt: Date.now() } },
-            { upsert: true, new: true }
-        );
-    } catch (err) {
-        console.error("Error logging search query:", err);
-    }
-};
+// const logSearchQuery = async (query) => {
+//     if (!query) return;
+//     try {
+//         await SearchQuery.findOneAndUpdate(
+//             { query: query.toLowerCase() },
+//             { $inc: { count: 1 }, $set: { lastSearchedAt: Date.now() } },
+//             { upsert: true, new: true }
+//         );
+//     } catch (err) {
+//         console.error("Error logging search query:", err);
+//     }
+// };
 
 
 const getConceptById = async (req, res) => {
@@ -66,38 +66,38 @@ const updateConcept = async (req, res) => {
     }
 };
 
-const patchConcept = async (req, res) => {
-    try {
-        const updates = {};
+// const patchConcept = async (req, res) => {
+//     try {
+//         const updates = {};
 
-        // Loop through the fields sent in the request body
-        for (let key in req.body) {
-            if (key === 'metadata' && typeof req.body.metadata === 'object') {
-                // If metadata is an object, update its sub-fields (e.g., metadata.category)
-                for (let subKey in req.body.metadata) {
-                    updates[`metadata.${subKey}`] = req.body.metadata[subKey];
-                }
-            } else {
-                // Otherwise, update the field directly (e.g., prompt)
-                updates[key] = req.body[key];
-            }
-        }
+//         // Loop through the fields sent in the request body
+//         for (let key in req.body) {
+//             if (key === 'metadata' && typeof req.body.metadata === 'object') {
+//                 // If metadata is an object, update its sub-fields (e.g., metadata.category)
+//                 for (let subKey in req.body.metadata) {
+//                     updates[`metadata.${subKey}`] = req.body.metadata[subKey];
+//                 }
+//             } else {
+//                 // Otherwise, update the field directly (e.g., prompt)
+//                 updates[key] = req.body[key];
+//             }
+//         }
 
-        const concept = await Designs.findByIdAndUpdate(req.params.id, { $set: updates }, {
-            new: true,
-            runValidators: true,
-        });
+//         const concept = await Designs.findByIdAndUpdate(req.params.id, { $set: updates }, {
+//             new: true,
+//             runValidators: true,
+//         });
 
-        if (!concept) {
-            return res.status(404).json({ msg: "Concept not found" });
-        }
-        res.status(200).json({ msg: "success", data: concept });
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: error.message });
-    }
-};
+//         if (!concept) {
+//             return res.status(404).json({ msg: "Concept not found" });
+//         }
+//         res.status(200).json({ msg: "success", data: concept });
+//     }
+//     catch (error) {
+//         console.log(error);
+//         res.status(500).json({ msg: error.message });
+//     }
+// };
 
 const deleteConcept = async (req, res) => {
     try {
@@ -123,26 +123,26 @@ const getRandomConcept = async (req, res) => {
     }
 };
 
-const getLatestConcepts = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 5;
+// const getLatestConcepts = async (req, res) => {
+//     try {
+//         const page = parseInt(req.query.page) || 1;
+//         const limit = parseInt(req.query.limit) || 5;
 
-        const concepts = await Designs.find().sort({ "metadata.generated_at": -1 }).skip((page - 1) * limit).limit(limit);
-        const total = await Designs.countDocuments();
+//         const concepts = await Designs.find().sort({ "metadata.generated_at": -1 }).skip((page - 1) * limit).limit(limit);
+//         const total = await Designs.countDocuments();
 
-        res.status(200).json({ 
-            msg: "success", 
-            data: concepts,
-            total,
-            page,
-            totalPages: Math.ceil(total / limit)
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: error.message });
-    }
-};
+//         res.status(200).json({ 
+//             msg: "success", 
+//             data: concepts,
+//             total,
+//             page,
+//             totalPages: Math.ceil(total / limit)
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ msg: error.message });
+//     }
+// };
 
 const getTrendingConcepts = async (req, res) => {
     try {
