@@ -34,7 +34,7 @@ This project also introduces important backend practices like **data validation 
 *  Express.js – Web framework for APIs
 *  MongoDB – NoSQL database
 *  Mongoose – ODM for MongoDB
-*  Joi – Data validation library
+
 
 ---
 
