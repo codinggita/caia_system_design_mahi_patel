@@ -5,7 +5,7 @@
 
 A modern, full-stack platform designed to help developers master **System Design**, **Backend Architecture**, **Frontend Patterns**, and **DevOps**. 
 
-Built with a clean **MVC backend** and a stunning, highly interactive **React glassmorphism frontend**, this project demonstrates how to build scalable, maintainable, and visually beautiful applications.
+Built with a clean **MVC backend** and a stunning, highly interactive **React frontend**, this project demonstrates how to build scalable, maintainable, and visually beautiful applications.
 
 ---
 
@@ -14,7 +14,7 @@ Built with a clean **MVC backend** and a stunning, highly interactive **React gl
 The **CAIA Platform** is a comprehensive educational tool that goes beyond just reading articles. It provides an immersive learning experience with dynamic roadmaps, community voting, personal note-taking, and deep analytics.
 
 The application is split into two parts:
-1. **Frontend:** A responsive, modern React application built with Vite, featuring custom UI components, glassmorphism aesthetics, and real-time interactions.
+1. **Frontend:** A responsive, modern React application built with Vite, featuring custom UI components, and real-time interactions.
 2. **Backend:** A robust Node.js/Express API connected to MongoDB Atlas, implementing advanced data aggregation, search algorithms, and structured MVC design.
 
 ---
@@ -22,7 +22,6 @@ The application is split into two parts:
 ## ✨ Key Features
 
 ### 🎨 Beautiful Modern UI
-- **Glassmorphism Design:** Semi-transparent, blurred backgrounds for a premium feel.
 - **Responsive Layouts:** Perfect viewing experience on both desktop and mobile devices.
 - **Interactive Micro-animations:** Smooth hover effects and transitions.
 
@@ -75,7 +74,6 @@ caia_system_design/
 * **React 18** – UI Library
 * **Vite** – Fast build tool and development server
 * **React Router DOM** – Client-side routing
-* **Lucide React** – Beautiful, consistent SVG icons
 * **Vanilla CSS** – Custom styling with CSS variables and glassmorphism tokens
 
 ### Backend
