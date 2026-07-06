@@ -1,3 +1,6 @@
+
+<img width="1918" height="947" alt="Screenshot 2026-07-06 131352" src="https://github.com/user-attachments/assets/776f03fc-c396-4bda-af2e-dee15960142a" />
+
 # 🚀 CAIA System Design Platform
 
 A modern, full-stack platform designed to help developers master **System Design**, **Backend Architecture**, **Frontend Patterns**, and **DevOps**. 
