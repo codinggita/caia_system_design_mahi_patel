@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+# 🚀 CAIA System Design Platform
+
+A modern, full-stack platform designed to help developers master **System Design**, **Backend Architecture**, **Frontend Patterns**, and **DevOps**. 
+
+Built with a clean **MVC backend** and a stunning, highly interactive **React glassmorphism frontend**, this project demonstrates how to build scalable, maintainable, and visually beautiful applications.
+=======
 
 <img width="1918" height="947" alt="Screenshot 2026-07-06 131352" src="https://github.com/user-attachments/assets/776f03fc-c396-4bda-af2e-dee15960142a" />
 
@@ -6,6 +13,7 @@
 A modern, full-stack platform designed to help developers master **System Design**, **Backend Architecture**, **Frontend Patterns**, and **DevOps**. 
 
 Built with a clean **MVC backend** and a stunning, highly interactive **React frontend**, this project demonstrates how to build scalable, maintainable, and visually beautiful applications.
+>>>>>>> d53a9a111f5ef7279744c8a3091365b89c6b10a1
 
 ---
 
@@ -14,7 +22,11 @@ Built with a clean **MVC backend** and a stunning, highly interactive **React fr
 The **CAIA Platform** is a comprehensive educational tool that goes beyond just reading articles. It provides an immersive learning experience with dynamic roadmaps, community voting, personal note-taking, and deep analytics.
 
 The application is split into two parts:
+<<<<<<< HEAD
+1. **Frontend:** A responsive, modern React application built with Vite, featuring custom UI components, glassmorphism aesthetics, and real-time interactions.
+=======
 1. **Frontend:** A responsive, modern React application built with Vite, featuring custom UI components, and real-time interactions.
+>>>>>>> d53a9a111f5ef7279744c8a3091365b89c6b10a1
 2. **Backend:** A robust Node.js/Express API connected to MongoDB Atlas, implementing advanced data aggregation, search algorithms, and structured MVC design.
 
 ---
@@ -22,6 +34,10 @@ The application is split into two parts:
 ## ✨ Key Features
 
 ### 🎨 Beautiful Modern UI
+<<<<<<< HEAD
+- **Glassmorphism Design:** Semi-transparent, blurred backgrounds for a premium feel.
+=======
+>>>>>>> d53a9a111f5ef7279744c8a3091365b89c6b10a1
 - **Responsive Layouts:** Perfect viewing experience on both desktop and mobile devices.
 - **Interactive Micro-animations:** Smooth hover effects and transitions.
 
@@ -74,6 +90,10 @@ caia_system_design/
 * **React 18** – UI Library
 * **Vite** – Fast build tool and development server
 * **React Router DOM** – Client-side routing
+<<<<<<< HEAD
+* **Lucide React** – Beautiful, consistent SVG icons
+=======
+>>>>>>> d53a9a111f5ef7279744c8a3091365b89c6b10a1
 * **Vanilla CSS** – Custom styling with CSS variables and glassmorphism tokens
 
 ### Backend
@@ -82,6 +102,11 @@ caia_system_design/
 * **MongoDB Atlas** – Cloud NoSQL database
 * **Mongoose** – Object Data Modeling (ODM)
 * **Cors & Dotenv** – Security and environment management
+<<<<<<< HEAD
+
+---
+
+=======
 
 ---
 ---
@@ -116,6 +141,7 @@ Below is an example of how concepts are stored and processed within the CAIA pla
 
 ---
 
+>>>>>>> d53a9a111f5ef7279744c8a3091365b89c6b10a1
 ## 🚀 Getting Started Locally
 
 ### Prerequisites
@@ -159,9 +185,14 @@ Open your browser and navigate to `http://localhost:5173`.
 ## 🌍 Deployment
 
 This application is completely deployment-ready!
+<<<<<<< HEAD
+- **Backend:** Configured to be easily deployed on Render, Railway, or Heroku. It uses `process.env.PORT` and allows CORS.
+- **Frontend:** Configured to be deployed on Vercel or Netlify. Just set the `VITE_API_BASE_URL` environment variable in your Vercel dashboard to point to your live backend!
+=======
 - **Backend:** : https://caia-system-design-mahi-patel.onrender.com/
 - **Frontend:** : https://caia-system-design-mahi-patel-r3un.vercel.app/
 - **Documentation:** : https://documenter.getpostman.com/view/50840755/2sBXwntsUA
+>>>>>>> d53a9a111f5ef7279744c8a3091365b89c6b10a1
 
 ---
 
