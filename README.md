@@ -84,6 +84,37 @@ caia_system_design/
 * **Cors & Dotenv** – Security and environment management
 
 ---
+---
+
+## 📌 Sample Concept Entry
+
+Below is an example of how concepts are stored and processed within the CAIA platform:
+
+```json
+{
+  "prompt": "Design a system that implements Horizontal vs vertical scaling for a large-scale application. Consider Foundations - Scalability requirements and constraints.",
+  "response": "# Designing a Scalable System: Horizontal vs. Vertical Scaling\n\n## Introduction\n\nScalability is a crucial aspect of large-scale applications, ensuring they can handle increased load effectively. In designing a system, you have to decide between two primary scaling strategies: **horizontal scaling** (scaling out by adding more machines) and **vertical scaling** (scaling up by adding more resources to existing machines).\n\n## Foundations of Scalability Requirements\n\n### Performance Requirements\n- Response Time\n- Throughput\n\n### Availability and Reliability\n- Fault Tolerance\n- Redundancy\n\n### Cost Constraints\n- Budget considerations\n- Operational costs\n\n### Future Growth\n- Traffic projections\n- Data growth\n\n## Scaling Strategies\n\n### Horizontal Scaling\n- Uses multiple machines\n- Load balancing (NGINX, AWS ELB)\n- Microservices & distributed DBs (MongoDB, Cassandra)\n\n### Vertical Scaling\n- Upgrade CPU, RAM\n- High-performance machines\n- Suitable for low-latency workloads\n\n## Conclusion\n\nA hybrid approach is often ideal for modern scalable systems."
+,
+  "metadata": {
+    "category": "Foundations",
+    "subcategory": "Scalability",
+    "concept": "Horizontal vs vertical scaling",
+    "question_type": "design",
+    "generated_at": "2025-08-20T17:49:57.932316"
+  }
+}
+```
+
+### 💡 Why This Matters
+
+* Demonstrates **real data structure used in backend**
+* Shows **prompt → response generation pipeline**
+* Highlights **metadata-driven filtering & analytics**
+* Useful for **search, recommendations, and trending engine**
+
+---
+
+---
 
 ## 🚀 Getting Started Locally
 
