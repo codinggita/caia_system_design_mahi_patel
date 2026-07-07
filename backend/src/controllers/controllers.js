@@ -1,6 +1,7 @@
 const Designs = require("../models/models");
 const SearchQuery = require("../models/searchQueryModel");
 const Note = require("../models/noteModel");
+const mockRoadmaps = require("./mockRoadmaps");
 
 const logSearchQuery = async (query) => {
     if (!query) return;
@@ -1063,7 +1064,8 @@ const getBackendRoadmap = async (req, res) => {
                 { "metadata.tags": { $regex: /backend/i } }
             ]
         }).limit(10);
-        res.status(200).json({ msg: "Backend learning roadmap", count: concepts.length, data: concepts });
+        const data = concepts.length > 0 ? concepts : mockRoadmaps.backend;
+        res.status(200).json({ msg: "Backend learning roadmap", count: data.length, data: data });
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
@@ -1077,7 +1079,8 @@ const getFrontendRoadmap = async (req, res) => {
                 { "metadata.tags": { $regex: /frontend/i } }
             ]
         }).limit(10);
-        res.status(200).json({ msg: "Frontend roadmap", count: concepts.length, data: concepts });
+        const data = concepts.length > 0 ? concepts : mockRoadmaps.frontend;
+        res.status(200).json({ msg: "Frontend roadmap", count: data.length, data: data });
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
@@ -1091,7 +1094,8 @@ const getDevOpsRoadmap = async (req, res) => {
                 { "metadata.tags": { $regex: /devops/i } }
             ]
         }).limit(10);
-        res.status(200).json({ msg: "DevOps roadmap", count: concepts.length, data: concepts });
+        const data = concepts.length > 0 ? concepts : mockRoadmaps.devops;
+        res.status(200).json({ msg: "DevOps roadmap", count: data.length, data: data });
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
@@ -1106,7 +1110,8 @@ const getSystemDesignRoadmap = async (req, res) => {
                 { "metadata.concept": { $regex: /system design/i } }
             ]
         }).limit(10);
-        res.status(200).json({ msg: "System design roadmap", count: concepts.length, data: concepts });
+        const data = concepts.length > 0 ? concepts : mockRoadmaps["system-design"];
+        res.status(200).json({ msg: "System design roadmap", count: data.length, data: data });
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }

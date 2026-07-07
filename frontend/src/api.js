@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
+// Connect to local backend during development, production URL during build
+const API_BASE_URL = import.meta.env.DEV ? 'http://localhost:3000/api/v1' : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1');
 
 export const CAIA_API = {
     async fetchWithTimeout(url, options = {}, timeout = 8000) {
@@ -88,6 +89,9 @@ export const CAIA_API = {
     // Analytics Endpoints
     async getCategoryDistribution() {
         return this.fetchWithTimeout(`${API_BASE_URL}/analytics/category-distribution`);
+    },
+    async getTrendingAnalytics() {
+        return this.fetchWithTimeout(`${API_BASE_URL}/analytics/trending`);
     },
     async getDifficultyStats() {
         return this.fetchWithTimeout(`${API_BASE_URL}/analytics/difficulty-stats`);
